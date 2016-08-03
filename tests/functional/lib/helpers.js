@@ -299,6 +299,32 @@ define([
   }
 
   /**
+   * Get the code, uid and reportSignInLink from the unblock email.
+   *
+   * @param {string} user or email
+   * @param {number} index
+   * @returns {promise} that resolves with object containing
+   * `code`, `uid`, and `reportSignInLink`
+   */
+  function getUnblockInfo(user, index) {
+    return function () {
+      if (/@/.test(user)) {
+        user = TestHelpers.emailToUser(user);
+      }
+
+      return getEmailHeaders(user, index)
+        .then(function (headers) {
+          return {
+            reportSignInLink: require.toUrl(headers['x-report-signin-link']),
+            uid: headers['x-uid'],
+            unblockCode: headers['x-unblock-code']
+          };
+        });
+    };
+  }
+
+
+  /**
    * Force a focus event to fire on an element.
    *
    * @param {string} [selector] - selector of element - defaults to the window.
@@ -403,7 +429,6 @@ define([
 
   function openVerificationLinkInNewTab(context, email, index, windowName) {
     var user = TestHelpers.emailToUser(email);
-    windowName = windowName || 'newwindow';
 
     return getVerificationLink(user, index)
       .then(function (verificationLink) {
@@ -425,8 +450,14 @@ define([
     };
   }
 
+  function openTab (url, name) {
+    return function () {
+      return this.parent.execute(openWindow, [ url, name ]);
+    };
+  }
+
   function openWindow (url, name) {
-    var newWindow = window.open(url, name);
+    var newWindow = window.open(url, name || 'newwindow');
 
     // Hook up the new window to listen for WebChannel messages.
     // XXX TODO: this is pretty gross to do universally like this...
@@ -1435,6 +1466,7 @@ define([
     getEmailHeaders: getEmailHeaders,
     getFxaClient: getFxaClient,
     getQueryParamValue: getQueryParamValue,
+    getUnblockInfo: getUnblockInfo,
     getVerificationLink: getVerificationLink,
     imageLoadedByQSA: imageLoadedByQSA,
     mousedown: mousedown,
@@ -1455,6 +1487,7 @@ define([
     openSettingsInNewTab: openSettingsInNewTab,
     openSignInInNewTab: openSignInInNewTab,
     openSignUpInNewTab: openSignUpInNewTab,
+    openTab: openTab,
     openVerificationLinkDifferentBrowser: openVerificationLinkDifferentBrowser,
     openVerificationLinkInNewTab: openVerificationLinkInNewTab,
     openVerificationLinkInSameTab: openVerificationLinkInSameTab,

@@ -7,10 +7,10 @@
 define(function (require, exports, module) {
   'use strict';
 
-  var AuthErrors = require('lib/auth-errors');
-  var p = require('lib/promise');
-  var VerificationMethods = require('lib/verification-methods');
-  var VerificationReasons = require('lib/verification-reasons');
+  const AuthErrors = require('lib/auth-errors');
+  const p = require('lib/promise');
+  const VerificationMethods = require('lib/verification-methods');
+  const VerificationReasons = require('lib/verification-reasons');
 
   module.exports = {
     // force auth extends a view with this mixin
@@ -20,19 +20,21 @@ define(function (require, exports, module) {
       'click': '_engageSignInForm',
       'input input': '_engageSignInForm'
     },
+
     /**
      * Sign in a user
      *
-     * @param {Account} account
+     * @param {Account} account - account being signed in to
      *     @param {String} account.sessionToken
      *     Session token from the account
      * @param {String} [password] - the user's password. Can be null if
      *  user is signing in with a sessionToken.
+     * @param {String} [unblockCode] - an unblock code.
      * @return {Object} promise
      */
-    signIn: function (account, password) {
+    signIn (account, password, unblockCode) {
       var self = this;
-      self.logEvent(`flow.${this.signInSubmitContext}.submit`);
+      self.logEvent(`flow.${self.signInSubmitContext}.submit`);
 
       if (! account ||
             account.isDefault() ||
@@ -46,7 +48,8 @@ define(function (require, exports, module) {
             // a resume token is passed in to allow
             // unverified account or session users to complete
             // email verification.
-            resume: self.getStringifiedResumeToken()
+            resume: self.getStringifiedResumeToken(),
+            unblockCode: unblockCode
           });
         })
         .then(function (account) {
@@ -64,6 +67,21 @@ define(function (require, exports, module) {
           }
 
           return self.onSignInSuccess(account);
+        })
+        .fail((err) => {
+          function isUnblockableError(err) {
+            return err.verificationMethod === 'email-captcha';
+          }
+
+          if (isUnblockableError(err)) {
+            return this.navigate('signin_unblock', {
+              account: account,
+              password: password
+            });
+          }
+
+          // re-throw error, it'll be handled elsewhere.
+          throw err;
         });
     },
 

@@ -5,12 +5,10 @@
 define(function (require, exports, module) {
   'use strict';
 
-  var chai = require('chai');
+  var { assert } = require('chai');
   var Constants = require('lib/constants');
   var TestHelpers = require('../../lib/helpers');
   var Validate = require('lib/validate');
-
-  var assert = chai.assert;
 
   var createRandomHexString = TestHelpers.createRandomHexString;
 
@@ -465,6 +463,27 @@ define(function (require, exports, module) {
         it('returns true for ' + item, function () {
           assert.isTrue(Validate.isBase64JwtValid(item));
         });
+      });
+    });
+
+    describe('isUnblockCodeValid', () => {
+      const invalidTypes = [
+        '',
+        createRandomHexString(Constants.UNBLOCK_CODE_LENGTH - 1),
+        createRandomHexString(Constants.UNBLOCK_CODE_LENGTH + 1)
+      ];
+
+      invalidTypes.forEach((item) => {
+        it('returns false for ' + item, () => {
+          assert.isFalse(Validate.isUnblockCodeValid(item));
+        });
+      });
+
+      it('returns true for correct length code', () => {
+        const validUnblockCode =
+          createRandomHexString(Constants.UNBLOCK_CODE_LENGTH);
+
+        assert.isTrue(Validate.isUnblockCodeValid(validUnblockCode));
       });
     });
   });

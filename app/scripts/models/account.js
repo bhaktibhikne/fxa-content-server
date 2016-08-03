@@ -373,36 +373,36 @@ define(function (require, exports, module) {
      * @param {String} password - The user's password
      * @param {Object} relier - Relier being signed in to
      * @param {Object} [options]
-     * @param {String} [options.reason] - Reason for the sign in. See definitons
-     * in sign-in-reasons.js. Defaults to SIGN_IN_REASONS.SIGN_IN.
-     * @param {String} [options.resume] - Resume token to send in verification
-     * email if user is unverified.
+     *   @param {String} [options.reason] - Reason for the sign in.
+     *   See definitons in sign-in-reasons.js. Defaults to
+     *   SIGN_IN_REASONS.SIGN_IN.
+     *   @param {String} [options.resume] - Resume token to send
+     *   in verification email if user is unverified.
+     *   @param {String} [options.unblockCode] - Unblock code.
      * @returns {Promise} - resolves when complete
      */
-    signIn: function (password, relier, options) {
-      var self = this;
-      options = options || {};
-
-      return p().then(function () {
-        var email = self.get('email');
-        var sessionToken = self.get('sessionToken');
+    signIn: function (password, relier, options = {}) {
+      return p().then(() => {
+        var email = this.get('email');
+        var sessionToken = this.get('sessionToken');
 
         if (password) {
-          return self._fxaClient.signIn(email, password, relier, {
-            metricsContext: self._metrics.getFlowEventMetadata(),
+          return this._fxaClient.signIn(email, password, relier, {
+            metricsContext: this._metrics.getFlowEventMetadata(),
             reason: options.reason || SignInReasons.SIGN_IN,
-            resume: options.resume
+            resume: options.resume,
+            unblockCode: options.unblockCode
           });
         } else if (sessionToken) {
           // We have a cached Sync session so just check that it hasn't expired.
           // The result includes the latest verified state
-          return self._fxaClient.recoveryEmailStatus(sessionToken);
+          return this._fxaClient.recoveryEmailStatus(sessionToken);
         } else {
           throw AuthErrors.toError('UNEXPECTED_ERROR');
         }
       })
-      .then(function (updatedSessionData) {
-        self.set(updatedSessionData);
+      .then((updatedSessionData) => {
+        this.set(updatedSessionData);
         return updatedSessionData;
       });
     },
@@ -889,6 +889,30 @@ define(function (require, exports, module) {
      */
     isPasswordResetComplete (token) {
       return this._fxaClient.isPasswordResetComplete(token);
+    },
+
+    /**
+     * Send a login unblock email.
+     *
+     * @returns {promise} resolves when complete
+     */
+    sendUnblockEmail () {
+      return this._fxaClient.sendUnblockEmail(
+        this.get('email')
+      );
+    },
+
+    /**
+     * Reject a login authorization code.
+     *
+     * @param {string} code
+     * @returns {promise} resolves when complete
+     */
+    rejectUnblockCode (code) {
+      return this._fxaClient.rejectUnblockCode(
+        this.get('uid'),
+        code
+      );
     }
   }, {
     ALLOWED_KEYS: ALLOWED_KEYS,

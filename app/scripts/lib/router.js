@@ -33,9 +33,12 @@ define(function (require, exports, module) {
   var PermissionsView = require('../views/permissions');
   var PpView = require('../views/pp');
   var ReadyView = require('../views/ready');
+  var ReportSignInView = require('views/report_sign_in');
   var ResetPasswordView = require('../views/reset_password');
   var SettingsView = require('../views/settings');
   var SignInView = require('../views/sign_in');
+  var SignInReportedView = require('views/sign_in_reported');
+  var SignInUnblockView = require('../views/sign_in_unblock');
   var SignUpView = require('../views/sign_up');
   var Storage = require('./storage');
   var TosView = require('../views/tos');
@@ -76,6 +79,7 @@ define(function (require, exports, module) {
       'oauth/force_auth(/)': createViewHandler(ForceAuthView),
       'oauth/signin(/)': createViewHandler(SignInView),
       'oauth/signup(/)': createViewHandler(SignUpView),
+      'report_signin(/)': createViewHandler(ReportSignInView),
       'reset_password(/)': createViewHandler(ResetPasswordView),
       'reset_password_complete(/)': createViewHandler(ReadyView, { type: VerificationReasons.PASSWORD_RESET }),
       'settings(/)': createViewHandler(SettingsView),
@@ -93,6 +97,8 @@ define(function (require, exports, module) {
       'signin(/)': createViewHandler(SignInView),
       'signin_complete(/)': createViewHandler(ReadyView, { type: VerificationReasons.SIGN_IN }),
       'signin_permissions(/)': createViewHandler(PermissionsView, { type: VerificationReasons.SIGN_IN }),
+      'signin_reported(/)': createViewHandler(SignInReportedView),
+      'signin_unblock(/)': createViewHandler(SignInUnblockView),
       'signup(/)': createViewHandler(SignUpView),
       'signup_complete(/)': createViewHandler(ReadyView, { type: VerificationReasons.SIGN_UP }),
       'signup_permissions(/)': createViewHandler(PermissionsView, { type: VerificationReasons.SIGN_UP }),

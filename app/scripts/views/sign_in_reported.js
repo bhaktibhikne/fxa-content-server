@@ -3,18 +3,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * List of reasons a user must perform some form of verification.
+ * An extremely small view that thanks the user for reporting
+ * a suspicious sign-in attempt.
  */
-
 define(function (require, exports, module) {
   'use strict';
 
-  return {
-    FORCE_AUTH: 'force_auth',
-    PASSWORD_RESET: 'reset_password',
-    SIGN_IN: 'login',
-    SIGN_IN_UNBLOCK: 'signin-unblock',
-    SIGN_UP: 'signup'
-  };
+  const BaseView = require('views/base');
+  const Template = require('stache!templates/sign_in_reported');
+
+  module.exports = BaseView.extend({
+    template: Template
+  });
 });
 

@@ -1167,5 +1167,22 @@ define(function (require, exports, module) {
         assert.isFalse(exists);
       });
     });
+
+    describe('rejectAccountUnblockCode', () => {
+      let account;
+      let UNBLOCK_CODE = '12345678';
+
+      beforeEach(() => {
+        account = user.initAccount({});
+        sinon.stub(account, 'rejectUnblockCode', () => p());
+
+        return user.rejectAccountUnblockCode(account, UNBLOCK_CODE);
+      });
+
+      it('delegates to the account', () => {
+        assert.isTrue(account.rejectUnblockCode.calledOnce);
+        assert.isTrue(account.rejectUnblockCode.calledWith(UNBLOCK_CODE));
+      });
+    });
   });
 });

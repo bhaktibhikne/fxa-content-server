@@ -19,6 +19,7 @@ define(function (require, exports, module) {
   var p = require('lib/promise');
   var Raven = require('raven');
   var TimerMixin = require('views/mixins/timer-mixin');
+  var Url = require('lib/url');
   var VerificationReasons = require('lib/verification-reasons');
 
   var DEFAULT_TITLE = window.document.title;
@@ -847,6 +848,15 @@ define(function (require, exports, module) {
       }
 
       return behavior;
+    },
+
+    /**
+     * Get the current window's search params
+     *
+     * @returns {Object}
+     */
+    getSearchParams () {
+      return Url.searchParams(this.window.location.search);
     }
   });
 

@@ -108,7 +108,9 @@ define(function (require, exports, module) {
     ],
 
     // Login delay for iOS broker
-    IOS_V1_LOGIN_MESSAGE_DELAY_MS: 10000
+    IOS_V1_LOGIN_MESSAGE_DELAY_MS: 10000,
+
+    UNBLOCK_CODE_LENGTH: 8
   };
   /*eslint-enable sorting/sort-object-props*/
 });

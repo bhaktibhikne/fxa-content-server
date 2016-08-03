@@ -288,6 +288,16 @@ define(function (require, exports, module) {
      */
     isBase64JwtValid: function isJwtValid(value) {
       return BASE64_JWT.test(value);
+    },
+
+    /**
+     * Check if an unblock code is valid
+     *
+     * @param {String} value
+     * @returns {Boolean}
+     */
+    isUnblockCodeValid (value) {
+      return !! (value && value.length === Constants.UNBLOCK_CODE_LENGTH);
     }
   };
 
