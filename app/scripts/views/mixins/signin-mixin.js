@@ -69,11 +69,8 @@ define(function (require, exports, module) {
           return self.onSignInSuccess(account);
         })
         .fail((err) => {
-          function isUnblockableError(err) {
-            return err.verificationMethod === 'email-captcha';
-          }
-
-          if (isUnblockableError(err)) {
+          if (err.verificationReason === VerificationReasons.SIGN_IN &&
+              err.verificationMethod === VerificationMethods.EMAIL_CAPTCHA) {
             return this.navigate('signin_unblock', {
               account: account,
               password: password

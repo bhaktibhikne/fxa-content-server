@@ -254,8 +254,8 @@ define(function (require, exports, module) {
 
         describe('can unblock', () => {
           beforeEach(() => {
-            blockedError.verificationReason = 'login';
-            blockedError.verificationMethod = 'email-captcha';
+            blockedError.verificationReason = VerificationReasons.SIGN_IN;
+            blockedError.verificationMethod = VerificationMethods.EMAIL_CAPTCHA;
 
             return view.signIn(account, 'password');
           });
