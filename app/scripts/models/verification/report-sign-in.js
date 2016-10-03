@@ -3,8 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * A model to hold report-sign-in data. Model has a `report` function
- * which will call the appropriate reporting endpoint on the auth server.
+ * A model to hold report-sign-in data.
  */
 
 define(function (require, exports, module) {

@@ -894,7 +894,7 @@ define(function (require, exports, module) {
     /**
      * Send a login unblock email.
      *
-     * @returns {promise} resolves when complete
+     * @returns {Promise} resolves when complete
      */
     sendUnblockEmail () {
       return this._fxaClient.sendUnblockEmail(
@@ -903,15 +903,15 @@ define(function (require, exports, module) {
     },
 
     /**
-     * Reject a login authorization code.
+     * Reject a login unblock code.
      *
-     * @param {string} code
-     * @returns {promise} resolves when complete
+     * @param {String} unblockCode
+     * @returns {Promise} resolves when complete
      */
-    rejectUnblockCode (code) {
+    rejectUnblockCode (unblockCode) {
       return this._fxaClient.rejectUnblockCode(
         this.get('uid'),
-        code
+        unblockCode
       );
     }
   }, {

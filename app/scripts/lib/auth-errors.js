@@ -112,7 +112,7 @@ define(function (require, exports, module) {
       errno: 126,
       message: t('Your account has been locked for security reasons')
     },
-    INVALID_UNBLOCK_CODE: {
+    UNKNOWN_UNBLOCK_CODE: {
       errno: 127,
       message: t('Invalid authorization code')
     },
@@ -312,6 +312,10 @@ define(function (require, exports, module) {
     UNBLOCK_CODE_REQUIRED: {
       errno: 1043,
       message: t('Authorization code required')
+    },
+    INVALID_UNBLOCK_CODE: {
+      errno: 1044,
+      message: t('Invalid authorization code')
     },
     DAMAGED_REJECT_UNBLOCK_LINK: {
       errno: 1045,

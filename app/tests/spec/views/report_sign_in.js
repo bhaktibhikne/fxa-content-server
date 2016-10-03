@@ -19,7 +19,7 @@ define(function (require, exports, module) {
   const INVALID_UID = createRandomHexString(UID_LENGTH + 1);
 
   const VALID_UNBLOCK_CODE = createRandomHexString(UNBLOCK_CODE_LENGTH);
-  const INVALID_UNBLOCK_CODE = createRandomHexString(UNBLOCK_CODE_LENGTH + 1);
+  const UNKNOWN_UNBLOCK_CODE = createRandomHexString(UNBLOCK_CODE_LENGTH + 1);
 
   describe('views/report_sign_in', () => {
     let user;
@@ -73,7 +73,7 @@ define(function (require, exports, module) {
 
       describe('with an invalid unblockCode', () => {
         beforeEach(() => {
-          return createAndRender(VALID_UID, INVALID_UNBLOCK_CODE);
+          return createAndRender(VALID_UID, UNKNOWN_UNBLOCK_CODE);
         });
 
         it('renders link damaged, logs the error', () => {

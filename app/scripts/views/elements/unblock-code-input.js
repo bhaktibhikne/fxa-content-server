@@ -15,6 +15,14 @@ define(function (require, exports, module) {
     return $el.attr('type') === 'text' && $el.hasClass('unblock-code');
   };
 
+  element.val = function (val) {
+    if (arguments.length === 1) {
+      return this.__val(val);
+    }
+
+    return this.__val().trim();
+  };
+
   element.validate = function () {
     const isRequired = typeof this.attr('required') !== 'undefined';
     const value = this.val();

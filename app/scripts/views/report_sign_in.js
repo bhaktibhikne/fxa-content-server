@@ -2,43 +2,44 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Allow users to report a signin.
+ */
 define(function (require, exports, module) {
   'use strict';
 
   const AuthErrors = require('lib/auth-errors');
   const FormView = require('views/form');
   const Template = require('stache!templates/report_sign_in');
-  const VerificationInfo = require('models/verification/report-sign-in');
+  const SignInToReport = require('models/verification/report-sign-in');
 
   const View = FormView.extend({
     className: 'report-sign-in',
     template: Template,
 
     initialize () {
-      this._verificationInfo = new VerificationInfo(this.getSearchParams());
+      this._signInToReport = new SignInToReport(this.getSearchParams());
     },
 
     beforeRender () {
-      if (! this._verificationInfo.isValid()) {
+      if (! this._signInToReport.isValid()) {
         this.logError(AuthErrors.toError('DAMAGED_REJECT_UNBLOCK_LINK'));
       }
     },
 
     submit () {
-      const verificationInfo = this._verificationInfo;
+      const signInToReport = this._signInToReport;
       const account = this.user.initAccount({
-        uid: verificationInfo.get('uid')
+        uid: signInToReport.get('uid')
       });
-      const unblockCode = verificationInfo.get('unblockCode');
+      const unblockCode = signInToReport.get('unblockCode');
 
       return this.user.rejectAccountUnblockCode(account, unblockCode)
         .then(() => this.navigate('signin_reported'));
     },
 
     context () {
-      const verificationInfo = this._verificationInfo;
-
-      const isLinkDamaged = ! verificationInfo.isValid();
+      const isLinkDamaged = ! this._signInToReport.isValid();
       const isLinkValid = ! isLinkDamaged;
 
       return {

@@ -567,7 +567,8 @@ define(function (require, exports, module) {
     /**
      * Send an unblock email.
      *
-     * @returns {promise} resolves with response when complete.
+     * @param {String} email - destination email address
+     * @returns {Promise} resolves with response when complete.
      */
     sendUnblockEmail: withClient((client, email) => {
       return client.sendUnblockCode(email);
@@ -576,12 +577,12 @@ define(function (require, exports, module) {
     /**
      * Reject an unblock code.
      *
-     * @param {string} uid - user id
-     * @param {string} code - login authorization code
-     * @returns {promise} resolves when complete.
+     * @param {String} uid - user id
+     * @param {String} unblockCode - unblock code
+     * @returns {Promise} resolves when complete.
      */
-    rejectUnblockCode: withClient((client, uid, code) => {
-      return client.rejectUnblockCode(uid, code);
+    rejectUnblockCode: withClient((client, uid, unblockCode) => {
+      return client.rejectUnblockCode(uid, unblockCode);
     })
   };
 

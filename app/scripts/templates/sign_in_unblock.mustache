@@ -1,14 +1,4 @@
 <div id="main-content" class="card">
-  {{#error}}
-    <header>
-      <h1 id="fxa-signin-unblock-header">{{#t}}Authorize this sign-in{{/t}}</h1>
-    </header>
-
-    <section>
-      <div class="error visible">{{error}}</div>
-    </section>
-  {{/error}}
-  {{^error}}
   <header>
     <h1 id="fxa-signin-unblock-header">{{#t}}Authorize this sign-in{{/t}}</h1>
   </header>
@@ -39,5 +29,4 @@
       <a href="https://support.mozilla.org" class="delayed-fadein right">{{#t}}Why is this happening?{{/t}}</a>
     </div>
   </section>
-  {{/error}}
 </div>

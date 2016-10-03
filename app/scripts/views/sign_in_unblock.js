@@ -2,6 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Allow the user to unblock their signin by entering
+ * in a verification code that is sent in an email.
+ */
 define(function (require, exports, module) {
   'use strict';
 
@@ -14,7 +18,6 @@ define(function (require, exports, module) {
   const SignInMixin = require('views/mixins/signin-mixin');
   const Template = require('stache!templates/sign_in_unblock');
 
-  const proto = FormView.prototype;
   const View = FormView.extend({
     template: Template,
     className: 'sign-in-unblock',
@@ -25,13 +28,9 @@ define(function (require, exports, module) {
 
     beforeRender () {
       if (! this.model.get('account')) {
-        this.navigate('signin');
+        this.navigate(this._getAuthPage());
         return false;
       }
-
-      return this._sendUnblockEmail()
-        .then(proto.beforeRender.call(this))
-        .fail(err => this.model.set('error', err));
     },
 
     context () {
@@ -39,7 +38,6 @@ define(function (require, exports, module) {
 
       return {
         email,
-        error: this.model.get('error'),
         unblockCodeLength: Constants.UNBLOCK_CODE_LENGTH
       };
     },
@@ -49,14 +47,14 @@ define(function (require, exports, module) {
       const password = this.model.get('password');
       const unblockCode = this.getElementValue('#unblock_code');
 
-      return this.signIn(account, password, unblockCode)
+      return this.signIn(account, password, { unblockCode })
         .fail((err) => this.onSignInError(account, password, err));
     },
 
     onSignInError (account, password, err) {
       if (AuthErrors.is(err, 'INCORRECT_PASSWORD')) {
         // The user must go enter the correct password this time.
-        this.navigate('signin', {
+        this.navigate(this._getAuthPage(), {
           email: account.get('email'),
           error: err
         });
@@ -71,7 +69,12 @@ define(function (require, exports, module) {
     },
 
     _sendUnblockEmail () {
-      return this.getAccount().sendUnblockEmail();
+      return this.getAccount().sendUnblockEmail()
+        .fail((err) => this.displayError(err));
+    },
+
+    _getAuthPage () {
+      return this.model.get('authPage') || 'signin';
     }
   });
 

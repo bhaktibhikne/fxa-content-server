@@ -48,8 +48,6 @@ define(function (require, exports, module) {
         uid: 'uid'
       });
 
-      sinon.stub(account, 'sendUnblockEmail', () => p());
-
       model = new Backbone.Model({
         account: account,
         password: 'password'
@@ -78,30 +76,9 @@ define(function (require, exports, module) {
     });
 
     describe('render', () => {
-      it('renders the view, sends the unblock email', () => {
+      it('renders the view', () => {
         assert.lengthOf(view.$('#fxa-signin-unblock-header'), 1);
         assert.include(view.$('.verification-email-message').text(), 'a@a.com');
-        assert.equal(account.sendUnblockEmail.callCount, 1);
-      });
-
-      describe('sendUnblockEmail errors', () => {
-        const unexpectedError = AuthErrors.toError('UNEXPECTED_ERROR');
-
-        beforeEach(() => {
-          account.sendUnblockEmail.restore();
-          sinon.stub(account, 'sendUnblockEmail',
-              () => p.reject(unexpectedError));
-
-          return view.render();
-        });
-
-        it('displays the error, user is unable to enter code', () => {
-          const $errorEl = view.$('.error');
-          assert.lengthOf($errorEl, 1);
-          assert.include($errorEl.text().toLowerCase(), 'unexpected');
-
-          assert.lengthOf(view.$('#error_code'), 0);
-        });
       });
 
       describe('without an account', () => {
@@ -119,12 +96,30 @@ define(function (require, exports, module) {
     });
 
     describe('resend', () => {
-      beforeEach(() => {
-        return view.resend();
+      describe('success', () => {
+        beforeEach(() => {
+          sinon.stub(account, 'sendUnblockEmail', () => p());
+          return view.resend();
+        });
+
+        it('delegate to the account', () => {
+          assert.isTrue(account.sendUnblockEmail.called);
+        });
       });
 
-      it('delegate to the account', () => {
-        assert.isTrue(account.sendUnblockEmail.called);
+      describe('errors', () => {
+        let err = AuthErrors.toError('UNEXPECTED_ERROR');
+
+        beforeEach(() => {
+          sinon.stub(account, 'sendUnblockEmail', () => p.reject(err));
+          sinon.spy(view, 'displayError');
+
+          return view.resend();
+        });
+
+        it('displays the error', () => {
+          assert.isTrue(view.displayError.calledWith(err));
+        });
       });
     });
 
@@ -182,7 +177,8 @@ define(function (require, exports, module) {
         });
 
         it('delegates to view.signIn, with the `password` and `unblockCode`', () => {
-          assert.isTrue(view.signIn.calledWith(account, 'password', UNBLOCK_CODE));
+          assert.isTrue(view.signIn.calledWith(
+            account, 'password', { unblockCode: UNBLOCK_CODE }));
         });
       });
 

@@ -23,8 +23,9 @@ define(function (require, exports, module) {
   describe('views/mixins/signin-mixin', function () {
     it('exports correct interface', function () {
       assert.isObject(SignInMixin);
-      assert.lengthOf(Object.keys(SignInMixin), 5);
+      assert.lengthOf(Object.keys(SignInMixin), 6);
       assert.isFunction(SignInMixin.signIn);
+      assert.isFunction(SignInMixin.onSignInBlocked);
       assert.isFunction(SignInMixin.onSignInSuccess);
       assert.equal(SignInMixin.signInSubmitContext, 'signin', 'has a submit context');
     });
@@ -55,6 +56,8 @@ define(function (require, exports, module) {
             clear: sinon.spy()
           },
           broker: broker,
+          currentPage: 'force_auth',
+          displayError: sinon.spy(),
           flow: flow,
           getStringifiedResumeToken: sinon.spy(function () {
             return RESUME_TOKEN;
@@ -68,6 +71,7 @@ define(function (require, exports, module) {
           model: model,
           navigate: sinon.spy(),
           on: sinon.spy(),
+          onSignInBlocked: SignInMixin.onSignInBlocked,
           onSignInSuccess: SignInMixin.onSignInSuccess,
           relier: relier,
           signIn: SignInMixin.signIn,
@@ -253,15 +257,45 @@ define(function (require, exports, module) {
         });
 
         describe('can unblock', () => {
-          beforeEach(() => {
-            blockedError.verificationReason = VerificationReasons.SIGN_IN;
-            blockedError.verificationMethod = VerificationMethods.EMAIL_CAPTCHA;
+          describe('email successfully sent', () => {
+            beforeEach(() => {
+              blockedError.verificationReason = VerificationReasons.SIGN_IN;
+              blockedError.verificationMethod = VerificationMethods.EMAIL_CAPTCHA;
 
-            return view.signIn(account, 'password');
+              sinon.stub(account, 'sendUnblockEmail', () => p());
+
+              return view.signIn(account, 'password');
+            });
+
+            it('redirects to `signin_unblock` with the account and password', () => {
+              assert.isTrue(view.navigate.calledWith(
+                'signin_unblock',
+                {
+                  account: account,
+                  authPage: 'force_auth',
+                  password: 'password'
+                }
+              ));
+            });
           });
 
-          it('redirects to `signin_unblock` with the account and password', () => {
-            assert.isTrue(view.navigate.calledWith('signin_unblock'));
+          describe('error sending email', () => {
+            const err = AuthErrors.toError('UNEXPECTED_ERROR');
+            let thrownErr;
+
+            beforeEach(() => {
+              blockedError.verificationReason = VerificationReasons.SIGN_IN;
+              blockedError.verificationMethod = VerificationMethods.EMAIL_CAPTCHA;
+
+              sinon.stub(account, 'sendUnblockEmail', () => p.reject(err));
+
+              return view.signIn(account, 'password')
+                .then(assert.fail, (_err) => thrownErr = _err);
+            });
+
+            it('re-throws the error for display', () => {
+              assert.strictEqual(thrownErr, err);
+            });
           });
         });
       });
