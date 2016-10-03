@@ -467,10 +467,15 @@ define(function (require, exports, module) {
     });
 
     describe('isUnblockCodeValid', () => {
+      const valid = createRandomHexString(Constants.UNBLOCK_CODE_LENGTH);
+      const containsSpace = valid.substr(0, 1) + ' ' + valid.substr(1, Constants.UNBLOCK_CODE_LENGTH - 2);
+
       const invalidTypes = [
         '',
         createRandomHexString(Constants.UNBLOCK_CODE_LENGTH - 1),
-        createRandomHexString(Constants.UNBLOCK_CODE_LENGTH + 1)
+        createRandomHexString(Constants.UNBLOCK_CODE_LENGTH + 1),
+        '#' + createRandomHexString(Constants.UNBLOCK_CODE_LENGTH - 1),
+        containsSpace
       ];
 
       invalidTypes.forEach((item) => {

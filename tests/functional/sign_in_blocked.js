@@ -67,6 +67,40 @@ define([
         .then(testElementExists('#fxa-settings-header'));
     },
 
+    'valid code with whitepsace at the beginning entered': function () {
+      return this.remote
+        .then(openPage(this, PAGE_URL, '#fxa-signin-header'))
+        .then(fillOutSignIn(this, email, PASSWORD))
+
+        .then(testElementExists('#fxa-signin-unblock-header'))
+        .then(testElementTextInclude('.verification-email-message', email))
+        .then(getUnblockInfo(email, 0))
+        .then(function (unblockInfo) {
+          return this.parent
+            .then(type('#unblock_code', '   ' + unblockInfo.unblockCode));
+        })
+        .then(click('button[type=submit]'))
+
+        .then(testElementExists('#fxa-settings-header'));
+    },
+
+    'valid code with whitepsace at the end entered': function () {
+      return this.remote
+        .then(openPage(this, PAGE_URL, '#fxa-signin-header'))
+        .then(fillOutSignIn(this, email, PASSWORD))
+
+        .then(testElementExists('#fxa-signin-unblock-header'))
+        .then(testElementTextInclude('.verification-email-message', email))
+        .then(getUnblockInfo(email, 0))
+        .then(function (unblockInfo) {
+          return this.parent
+            .then(type('#unblock_code', unblockInfo.unblockCode + '   '));
+        })
+        .then(click('button[type=submit]'))
+
+        .then(testElementExists('#fxa-settings-header'));
+    },
+
     'invalid code entered': function () {
       return this.remote
         .then(openPage(this, PAGE_URL, '#fxa-signin-header'))

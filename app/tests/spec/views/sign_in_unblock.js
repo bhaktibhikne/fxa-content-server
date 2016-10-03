@@ -153,15 +153,23 @@ define(function (require, exports, module) {
         });
       });
 
-      describe('with a valid code', () => {
-        beforeEach(() => {
-          view.$('#unblock_code').val(UNBLOCK_CODE);
-          view.enableSubmitIfValid();
-          return view.validateAndSubmit();
-        });
+      const validUnblockCodes = [
+        UNBLOCK_CODE,
+        '   ' + UNBLOCK_CODE,
+        UNBLOCK_CODE + '   ',
+        '   ' + UNBLOCK_CODE + '   '
+      ];
+      validUnblockCodes.forEach((unblockCode) => {
+        describe(`with a valid code: '${unblockCode}'`, () => {
+          beforeEach(() => {
+            view.$('#unblock_code').val(UNBLOCK_CODE);
+            view.enableSubmitIfValid();
+            return view.validateAndSubmit();
+          });
 
-        it('calls submit', () => {
-          assert.isTrue(view.submit.called);
+          it('calls submit', () => {
+            assert.equal(view.submit.callCount, 1);
+          });
         });
       });
     });

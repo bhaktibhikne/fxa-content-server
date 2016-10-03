@@ -182,10 +182,11 @@ The event stream is a log of events and the time they occurred while the user is
 * delete-account.deleted - user successfully deleted an account
 
 #### force_auth
+* error.force_auth.auth.114 - request has been throttled
+* error.force_auth.auth.125 - request has been blocked
 * flow.force_auth.engage - user engaged the form
 * flow.force_auth.submit - user submit the form with front-end validation passing
 
-#### force_auth
 #### legal
 #### pp
 #### ready
@@ -266,6 +267,7 @@ The event stream is a log of events and the time they occurred while the user is
 #### signin
 * error.oauth.signin.auth.1011 - user did not enter an email address
 * error.oauth.signin.auth.1023 - user entered an email address that was invalid
+* error.signin.auth.103 - incorrect password
 * error.signin.auth.114 - request has been throttled
 * error.signin.auth.121 - account locked
 * error.signin.auth.125 - request has been blocked
@@ -304,6 +306,9 @@ No page specific events
 #### signup
 * error.oauth.signup.auth.1011 - user did not enter an email address
 * error.oauth.signup.auth.1023 - user entered an email address that was invalid
+* error.signup.auth.103 - incorrect password (for signin from signup)
+* error.signup.auth.114 - request has been throttled
+* error.signup.auth.125 - request has been blocked
 * error.signup.auth.1011 - user did not enter an email address
 * error.signup.auth.1011 - user did not enter an email address
 * error.signup.auth.1012 - user did not enter year of birth
