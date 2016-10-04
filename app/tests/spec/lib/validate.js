@@ -5,12 +5,14 @@
 define(function (require, exports, module) {
   'use strict';
 
-  var { assert } = require('chai');
-  var Constants = require('lib/constants');
-  var TestHelpers = require('../../lib/helpers');
-  var Validate = require('lib/validate');
+  const { assert } = require('chai');
+  const Constants = require('lib/constants');
+  const TestHelpers = require('../../lib/helpers');
+  const Validate = require('lib/validate');
 
-  var createRandomHexString = TestHelpers.createRandomHexString;
+  const createRandomBase36String =
+    (length) => TestHelpers.createRandomString(length, 36);
+  const createRandomHexString = TestHelpers.createRandomHexString;
 
   describe('lib/validate', function () {
     describe('isEmailValid', function () {
@@ -467,14 +469,17 @@ define(function (require, exports, module) {
     });
 
     describe('isUnblockCodeValid', () => {
-      const valid = createRandomHexString(Constants.UNBLOCK_CODE_LENGTH);
-      const containsSpace = valid.substr(0, 1) + ' ' + valid.substr(1, Constants.UNBLOCK_CODE_LENGTH - 2);
+      const validUnblockCode =
+        createRandomBase36String(Constants.UNBLOCK_CODE_LENGTH);
+      const containsSpace = validUnblockCode.substr(0, 1) + ' ' +
+        validUnblockCode.substr(1, Constants.UNBLOCK_CODE_LENGTH - 2);
 
       const invalidTypes = [
         '',
-        createRandomHexString(Constants.UNBLOCK_CODE_LENGTH - 1),
-        createRandomHexString(Constants.UNBLOCK_CODE_LENGTH + 1),
-        '#' + createRandomHexString(Constants.UNBLOCK_CODE_LENGTH - 1),
+        createRandomBase36String(Constants.UNBLOCK_CODE_LENGTH - 1),
+        createRandomBase36String(Constants.UNBLOCK_CODE_LENGTH + 1),
+        createRandomBase36String(Constants.UNBLOCK_CODE_LENGTH * 2),
+        '#' + createRandomBase36String(Constants.UNBLOCK_CODE_LENGTH - 1),
         containsSpace
       ];
 
@@ -484,11 +489,10 @@ define(function (require, exports, module) {
         });
       });
 
-      it('returns true for correct length code', () => {
-        const validUnblockCode =
-          createRandomHexString(Constants.UNBLOCK_CODE_LENGTH);
-
+      it('returns true for valid code', () => {
         assert.isTrue(Validate.isUnblockCodeValid(validUnblockCode));
+        assert.isTrue(Validate.isUnblockCodeValid(validUnblockCode.toLowerCase()));
+        assert.isTrue(Validate.isUnblockCodeValid(validUnblockCode.toUpperCase()));
       });
     });
   });

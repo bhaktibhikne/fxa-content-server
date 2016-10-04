@@ -6,7 +6,6 @@ define(function (require, exports, module) {
   'use strict';
 
   const AuthErrors = require('lib/auth-errors');
-  const Constants = require('lib/constants');
   const textInput = require('views/elements/text-input');
   const Validate = require('lib/validate');
 
