@@ -8,6 +8,7 @@ define(function (require, exports, module) {
   const AuthErrors = require('lib/auth-errors');
   const Constants = require('lib/constants');
   const textInput = require('views/elements/text-input');
+  const Validate = require('lib/validate');
 
   const element = Object.create(textInput);
 
@@ -29,7 +30,7 @@ define(function (require, exports, module) {
 
     if (isRequired && ! value.length) {
       throw AuthErrors.toError('UNBLOCK_CODE_REQUIRED');
-    } else if (value.length !== Constants.UNBLOCK_CODE_LENGTH) {
+    } else if (! Validate.isUnblockCodeValid(value)) {
       throw AuthErrors.toError('INVALID_UNBLOCK_CODE');
     }
   };

@@ -26,7 +26,7 @@ define(function (require, exports, module) {
   const uuidRegEx = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   // case insensitive match of an unblock code, e.g.: AB12YU7Z
-  const unblockCodeRegExp = new RegExp(`^[a-z0-9]{${UNBLOCK_CODE_LENGTH},${UNBLOCK_CODE_LENGTH}}$`, 'gi');
+  const unblockCodeRegExp = new RegExp(`^[a-z0-9]{${UNBLOCK_CODE_LENGTH},${UNBLOCK_CODE_LENGTH}}$`, 'i');
 
   // Email regex, accepts punycoded addresses. See:
   //   * http://blog.gerv.net/2011/05/html5_email_address_regexp/
